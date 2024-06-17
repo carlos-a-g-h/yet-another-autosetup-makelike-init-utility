@@ -1,1 +1,1 @@
-# Yet some other auto-runner out there
+# Yet another auto-runner program out there
