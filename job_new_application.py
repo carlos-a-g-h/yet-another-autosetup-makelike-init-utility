@@ -5,8 +5,7 @@ from typing import Mapping,Optional
 
 from utils import util_verif_str
 from utils import util_verif_bool
-
-from job_create_symlink import job as create_link
+from utils import util_create_symlink
 
 _JOBNAME="new-app"
 
@@ -92,7 +91,7 @@ def job(
 
 	if isinstance(app_path_link,str):
 		dirpath_link=Path(app_path_link)
-		if not create_link(filepath,dirpath_link,True,True):
+		if not util_create_symlink(filepath,dirpath_link,True):
 			print(
 				"WARNING: Failed to create the link for the app"
 			)

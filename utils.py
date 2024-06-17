@@ -73,6 +73,49 @@ def util_verif_bool(
 
 	return data
 
+def util_create_symlink(
+		path_orig:Path,
+		path_dest:Path,
+		link_indir:bool
+	)->bool:
+
+	path_dest_ok=path_dest
+
+	if link_indir:
+		if path_dest.exists():
+			if not path_dest.is_dir():
+				return False
+
+		path_dest_ok=path_dest.joinpath(path_orig.name)
+		if path_dest_ok.exists():
+			return False
+
+	if not path_orig.exists():
+		return False
+
+	if path_dest_ok.is_symlink():
+		return False
+
+	path_dest_ok.parent.mkdir(
+		exist_ok=True,
+		parents=True
+	)
+
+	try:
+		path_dest_ok.symlink_to(
+			path_orig
+		)
+	except Exception as exc:
+		print(
+			"Failed to create symlink:",
+			exc
+		)
+		return False
+
+	return (
+		path_dest_ok.is_symlink()
+	)
+
 def util_subproc(command:list)->bool:
 
 	time_sleep(0.1)
