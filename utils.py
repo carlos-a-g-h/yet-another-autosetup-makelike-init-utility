@@ -116,14 +116,18 @@ def util_create_symlink(
 		path_dest_ok.is_symlink()
 	)
 
-def util_subproc(command:list)->bool:
+def util_subproc(
+		command:list,
+		announce:bool=True,
+	)->bool:
 
 	time_sleep(0.1)
 
-	print(
-		"\nRunning command:\n$",
-		command
-	)
+	if announce:
+		print(
+			"\nRunning command:\n$",
+			command
+		)
 
 	proc=sub_run(
 		command,

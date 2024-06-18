@@ -1,7 +1,7 @@
 #!/usr/bin/python3.9
 
 from pathlib import Path
-from typing import Mapping
+from typing import Mapping,Optional
 
 from utils import util_yaml_reader
 from utils import util_verif_bool
@@ -26,11 +26,25 @@ from job_mount_directory import _JOBNAME as _SYMBOL_JOBNAME_MOUNT_DIR
 from job_mount_volume import main as runjob_mount_volume
 from job_mount_volume import _JOBNAME as _SYMBOL_JOBNAME_MOUNT_VOLUME
 
+from job_apt_install import main as runjob_apt_install
+from job_apt_install import _JOBNAME as _SYMBOL_JOBNAME_APTINSTALL
+
 from job_new_application import main as runjob_new_application
 from job_new_application import _JOBNAME as _SYMBOL_JOBNAME_NEW_APP
 
 _SYMBOL_TIME_SETTINGS="time-settings"
 _SYMBOL_JOBLIST="joblist"
+
+_KNOWN_JOBS=(
+	_SYMBOL_JOBNAME_CUSTOM_SCRIPT,
+	_SYMBOL_JOBNAME_WRITE_FILE,
+	_SYMBOL_JOBNAME_CREATE_SYMLINK,
+	_SYMBOL_JOBNAME_MOUNT_BLOCK,
+	_SYMBOL_JOBNAME_MOUNT_DIR,
+	_SYMBOL_JOBNAME_MOUNT_VOLUME,
+	_SYMBOL_JOBNAME_APTINSTALL,
+	_SYMBOL_JOBNAME_NEW_APP,
+)
 
 def runner_timesetup(data_time:Mapping):
 
@@ -44,20 +58,15 @@ def runner_timesetup(data_time:Mapping):
 
 def runner_joblist(
 		data_joblist:list,
-		path_programdir:Path
+		path_programdir:Path,
+		target_tag:Optional[str]=None
 	):
 
 	print("\n[ Job List ]")
 
-	known_jobs=(
-		_SYMBOL_JOBNAME_CUSTOM_SCRIPT,
-		_SYMBOL_JOBNAME_WRITE_FILE,
-		_SYMBOL_JOBNAME_CREATE_SYMLINK,
-		_SYMBOL_JOBNAME_MOUNT_BLOCK,
-		_SYMBOL_JOBNAME_MOUNT_DIR,
-		_SYMBOL_JOBNAME_MOUNT_VOLUME,
-		_SYMBOL_JOBNAME_NEW_APP,
-	)
+	spec_tag=False
+	if isinstance(target_tag,str):
+		spec_tag=True
 
 	for step in data_joblist:
 		if not isinstance(step,Mapping):
@@ -65,7 +74,7 @@ def runner_joblist(
 		if not len(step)==1:
 			continue
 		mainkey=list(step.keys())[0]
-		if mainkey not in known_jobs:
+		if mainkey not in _KNOWN_JOBS:
 			continue
 
 		ok=False
@@ -78,9 +87,14 @@ def runner_joblist(
 			step.get(mainkey,{}).get("crucial",False)
 		)
 
+		hidden=util_verif_bool(
+			step.get(mainkey,{}).get("hidden",False)
+		)
+
 		headline=(
 			f"Job {mainkey}" "\n"
-			"\t" f"crucial: {crucial}"
+			"\t" f"crucial: {crucial}" "\n"
+			"\t" f"hidden: {hidden}"
 		)
 		if isinstance(tag,str):
 			headline=(
@@ -88,6 +102,12 @@ def runner_joblist(
 				"\t" f"tag: {tag}"
 			)
 		print(headline)
+		if hidden and (not spec_tag):
+			continue
+
+		if spec_tag:
+			if not target_tag==tag:
+				continue
 
 		if mainkey==_SYMBOL_JOBNAME_CUSTOM_SCRIPT:
 			ok=runjob_custom_script(step.get(mainkey),path_programdir)
@@ -106,6 +126,9 @@ def runner_joblist(
 
 		if mainkey==_SYMBOL_JOBNAME_MOUNT_VOLUME:
 			ok=runjob_mount_volume(step.get(mainkey))
+
+		if mainkey==_SYMBOL_JOBNAME_APTINSTALL:
+			ok=runjob_apt_install(step.get(mainkey))
 
 		if mainkey==_SYMBOL_JOBNAME_NEW_APP:
 			ok=runjob_new_application(step.get(mainkey))
@@ -171,16 +194,18 @@ def command_help()->int:
 	print(
 
 		"\n"
-		"Config file structure (in YAML btw):" "\n\n"
+		"# Config file structure (in YAML btw):" "\n\n"
 
 		f"{_SYMBOL_TIME_SETTINGS}:" "\n"
-			"\t" "timezone: # Any valid timezone listed in timedatectl" "\n\n"
+			"\t" "timezone:" "\n"
+			"\t\t" "# Any valid timezone listed in timedatectl" "\n"
+			"\t\t" "# timedatectl (and systemd) must be installed in order for this to work" "\n"
+
+		"\n"
 
 		f"{_SYMBOL_JOBLIST}:" "\n"
 		"\t" "# List of jobs to perform sequentially" "\n"
-		"\t" "# There are 5 types of jobs, each can be crucial or not" "\n"
-		"\t" "# You can reuse any of the job types as much as you want to match your specific needs" "\n"
-		"\t" "# Jobs with 'crucial' set to 'true' will cancel what is left to do in the list" "\n"
+		"\t" f"# There are {len(_KNOWN_JOBS)} types of jobs:" "\n"
 
 		"\n"
 
@@ -203,8 +228,8 @@ def command_help()->int:
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_MOUNT_BLOCK}: # Mount a file or block device" "\n"
-		"\t\t" "file: # Absolute path to the block device file" "\n"
-		"\t\t" "dest: # Absolute path to the destination directory" "\n"
+		"\t\t" "file: # (Mandatory) Absolute path to the block device file" "\n"
+		"\t\t" "dest: # (Mandatory) Absolute path to the destination directory" "\n"
 		"\t\t" "mode: # Mount mode (rw, ro). Leaving it blank means auto" "\n"
 
 		"\n"
@@ -216,24 +241,48 @@ def command_help()->int:
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_MOUNT_VOLUME}: # Mount a volume by its UUID" "\n"
-		"\t\t" "uuid: # UUID of the volume (partition) that you want to mount" "\n"
-		"\t\t" "dest: # Absolute path to the destination directory" "\n"
+		"\t\t" "uuid: # (Mandatory) UUID of the volume (partition) that you want to mount" "\n"
+		"\t\t" "dest: # (Mandatory) Absolute path to the destination directory" "\n"
 		"\t\t" "mode: # Mount mode (rw, ro). Leaving it blank means auto" "\n"
+
+		"\n"
+
+		"\t" f"- {_SYMBOL_JOBNAME_APTINSTALL}:" "\n"
+			"\t\t" "# Install packages from remote sources OR local .DEB packages using APT" "\n"
+			"\t\t" "# NOTE: You cannot do both things in the same job, you have to choose what to do" "\n"
+		"\t\t" "path: # Path to a package or a directory (non-recursive)" "\n"
+		"\t\t" "names: # Names of packages separated by a single space" "\n"
 
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_NEW_APP}: # Creates (or overwrites) a .DESKTOP file in /usr/share/applications" "\n"
 		"\t\t" "stem: # Filename without the extension" "\n"
-		"\t\t" "name: # .DESKTOP Name (Mandatory)" "\n"
-		"\t\t" "exec: # .DESKTOP Exec (Mandatory)" "\n"
+		"\t\t" "name: # (Mandatory) .DESKTOP Name" "\n"
+		"\t\t" "exec: # (Mandatory) .DESKTOP Exec" "\n"
 		"\t\t" "categories: # .DESKTOP Categories (Mandatory)" "\n"
 		"\t\t" "comment: # .DESKTOP Comment" "\n"
 		"\t\t" "terminal: # .DESKTOP Terminal (Bool, defaults to false)" "\n"
 		"\t\t" "icon: # .DESKTOP Icon" "\n"
 		"\t\t" "mimetype: # .DESKTOP MymeType" "\n"
 		"\t\t" "snotify: # .DESKTOP StartupNotify (Bool, defaults to false)" "\n"
-		"\t\t" "path-icon: # Path to the icon file. The filename will be the icon name + the given icon file extension and it will be copied to /usr/share/icons/" "\n"
-		"\t\t" "path-link: # Path to create a symlink, it has to be a directory" "\n"
+		"\t\t" "path-icon:" "\n"
+			"\t\t\t" "# Image file path that will be copied to /usr/share/icons/" "\n"
+			"\t\t\t" "# The filename will be the icon name + the file extension from the given path" "\n"
+		"\t\t" "path-link:" "\n"
+			"\t\t\t" "# Path to a new symlink" "\n"
+			"\t\t\t" "# The path has to be a directory" "\n"
+
+		"\n"
+
+		"\t" "# Think of the jobs as functions: You can reuse any of the available jobs with different parameters as much as you want to match your specific needs" "\n\n"
+
+		"\t" "# Additional fields for jobs:" "\n\n"
+
+		"\t" "# 'tag' field: You can add the 'tag' field to any job to identify it at runtime, this is good for debugging and testing" "\n"
+		"\t" "# 'crucial' field: Jobs marked as crucial will cancel the entire workflow in case of failure" "\n"
+		"\t" "# 'hidden' field: Hidden jobs will be skipped when running the joblist"
+
+		"\n"
 	)
 
 	return 0
@@ -253,7 +302,7 @@ if __name__=="__main__":
 			"Commands" "\n"
 			"--------" "\n"
 			"help → Shows the config file reference (it has no args)" "\n"
-			"run → Runs a config file. It requires the path to the config file" "\n"
+			"run → Runs a config file" "\n"
 		)
 
 		sys_exit(0)

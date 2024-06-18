@@ -3,7 +3,7 @@
 apt install -yy patchelf ccache python3-dev build-essential
 
 FILE_SRC="main.py"
-FILE_OUT="yup"
+FILE_OUT="yetup"
 DIR_OUT="the-output"
 
 mkdir the-output
@@ -15,3 +15,7 @@ python3 -m nuitka \
 	"$FILE_SRC" \
 	--output-dir="$DIR_OUT" \
 	--output-filename="$FILE_OUT"
+
+echo "[!] The file is called: $FILE_OUT"
+
+ls "$DIR_OUT"
