@@ -222,7 +222,7 @@ def command_help()->int:
 		"\t" f"- {_SYMBOL_JOBNAME_CREATE_SYMLINK}: # Create symbolic link (absolute paths only)" "\n"
 		"\t\t" "orig: # (Mandatory) Absolute path to a real file or directory" "\n"
 		"\t\t" "dest: # (Mandatory) Absolute path to the destination path for the symlink" "\n"
-		"\t\t" "indir: # Wether the destination path is a directory and the symlink has to be created as a child of that directory"
+		"\t\t" "indir: # Wether the destination path is a directory and the symlink has to be created as a child of that directory" "\n"
 
 		"\n"
 
