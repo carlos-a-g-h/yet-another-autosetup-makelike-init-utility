@@ -16,6 +16,4 @@ python3 -m nuitka \
 	--output-dir="$DIR_OUT" \
 	--output-filename="$FILE_OUT"
 
-echo "[!] The file is called: $FILE_OUT"
-
 ls "$DIR_OUT"
