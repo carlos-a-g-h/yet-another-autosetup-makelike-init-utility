@@ -105,19 +105,18 @@ def job(
 			if wutt:
 				print(
 					"WARNING: Failed to copy icon file" "\n"
-					"\t" f"{app_path_icon_pl}" "\n"
 					"\t" "The given path is not a file" "\n"
 				)
 
-			wutt=(
-				app_path_icon_pl.stat().st_size>1024*1024*5
-			)
-			if wutt:
-				print(
-					"WARNING: Failed to copy icon file" "\n"
-					"\t" f"{app_path_icon_pl}" "\n"
-					"\t" "The file is too big (>5MB)" "\n"
+			if not wutt:
+				wutt=(
+					app_path_icon_pl.stat().st_size>1024*1024*5
 				)
+				if wutt:
+					print(
+						"WARNING: Failed to copy icon file" "\n"
+						"\t" "The file is too big (>5MB)" "\n"
+					)
 
 			if not wutt:
 				try:
@@ -128,8 +127,7 @@ def job(
 					)
 				except Exception as exc:
 					print(
-						"WARNING: Failed to copy icon file" "\n"
-						"\t" f"{app_path_icon_pl}" "\n\t",
+						"WARNING: Failed to copy icon file" "\n",
 						exc
 					)
 

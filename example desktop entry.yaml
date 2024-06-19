@@ -4,6 +4,7 @@ joblist:
   - new-app:
       # 'name', 'exec', and 'categories' are mandatory
       # the filepath of the icon will end up being like this: /usr/share/icons/name-of-the-icon-without-the-extension.svg
+      stem: program-name
       name: Program 1
       exec: program-name
       categories: System;
