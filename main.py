@@ -8,29 +8,29 @@ from utils import util_verif_bool
 from utils import util_verif_str
 from utils import util_subproc
 
-from job_custom_script import main as runjob_custom_script
-from job_custom_script import _JOBNAME as _SYMBOL_JOBNAME_CUSTOM_SCRIPT
+from func_custom_script import main as runjob_custom_script
+from func_custom_script import _JOBNAME as _SYMBOL_JOBNAME_CUSTOM_SCRIPT
 
-from job_write_file import main as runjob_write_file
-from job_write_file import _JOBNAME as _SYMBOL_JOBNAME_WRITE_FILE
+from func_write_file import main as runjob_write_file
+from func_write_file import _JOBNAME as _SYMBOL_JOBNAME_WRITE_FILE
 
-from job_create_symlink import main as runjob_create_symlink
-from job_create_symlink import _JOBNAME as _SYMBOL_JOBNAME_CREATE_SYMLINK
+from func_create_symlink import main as runjob_create_symlink
+from func_create_symlink import _JOBNAME as _SYMBOL_JOBNAME_CREATE_SYMLINK
 
-from job_mount_block import main as runjob_mount_block
-from job_mount_block import _JOBNAME as _SYMBOL_JOBNAME_MOUNT_BLOCK
+from func_mount_block import main as runjob_mount_block
+from func_mount_block import _JOBNAME as _SYMBOL_JOBNAME_MOUNT_BLOCK
 
-from job_mount_directory import main as runjob_mount_directory
-from job_mount_directory import _JOBNAME as _SYMBOL_JOBNAME_MOUNT_DIR
+from func_mount_directory import main as runjob_mount_directory
+from func_mount_directory import _JOBNAME as _SYMBOL_JOBNAME_MOUNT_DIR
 
-from job_mount_volume import main as runjob_mount_volume
-from job_mount_volume import _JOBNAME as _SYMBOL_JOBNAME_MOUNT_VOLUME
+from func_mount_volume import main as runjob_mount_volume
+from func_mount_volume import _JOBNAME as _SYMBOL_JOBNAME_MOUNT_VOLUME
 
-from job_apt_install import main as runjob_apt_install
-from job_apt_install import _JOBNAME as _SYMBOL_JOBNAME_APTINSTALL
+from func_apt_install import main as runjob_apt_install
+from func_apt_install import _JOBNAME as _SYMBOL_JOBNAME_APTINSTALL
 
-from job_new_application import main as runjob_new_application
-from job_new_application import _JOBNAME as _SYMBOL_JOBNAME_NEW_APP
+from func_new_application import main as runjob_new_application
+from func_new_application import _JOBNAME as _SYMBOL_JOBNAME_NEW_APP
 
 _SYMBOL_TIME_SETTINGS="time-settings"
 _SYMBOL_JOBLIST="joblist"
@@ -59,14 +59,14 @@ def runner_timesetup(data_time:Mapping):
 def runner_joblist(
 		data_joblist:list,
 		path_programdir:Path,
-		target_tag:Optional[str]=None
+		#target_tag:Optional[str]=None
 	):
 
-	print("\n[ Job List ]")
+	print("\n[ Jobs List ]")
 
-	spec_tag=False
-	if isinstance(target_tag,str):
-		spec_tag=True
+	#spec_tag=False
+	#if isinstance(target_tag,str):
+	#	spec_tag=True
 
 	for step in data_joblist:
 		if not isinstance(step,Mapping):
@@ -101,13 +101,17 @@ def runner_joblist(
 				f"{headline}" "\n"
 				"\t" f"tag: {tag}"
 			)
-		print(headline)
-		if hidden and (not spec_tag):
+
+		if hidden:
 			continue
 
-		if spec_tag:
-			if not target_tag==tag:
-				continue
+		#print(headline)
+		#if hidden and (not spec_tag):
+		#	continue
+
+		#if spec_tag:
+		#	if not target_tag==tag:
+		#		continue
 
 		if mainkey==_SYMBOL_JOBNAME_CUSTOM_SCRIPT:
 			ok=runjob_custom_script(step.get(mainkey),path_programdir)
