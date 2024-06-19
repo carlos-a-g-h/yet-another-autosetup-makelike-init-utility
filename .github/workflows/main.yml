@@ -67,8 +67,13 @@ jobs:
           mv -v README.md "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}/"
           mv -v LICENSE "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}/"
 
+          mkdir -v "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}/examples"
+          mv -v example* "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}/examples/"
+
+          echo "Content {"
+          find "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}"
+          echo "}"
           zip -0 -r "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}.zip" "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}"
-          find .
 
       - name: Attach the artifact
         uses: actions/upload-release-asset@v1
