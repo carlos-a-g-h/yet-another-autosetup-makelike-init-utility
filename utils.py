@@ -125,7 +125,7 @@ def util_subproc(
 
 	if announce:
 		print(
-			"\nRunning command:\n$",
+			"Running command:\n$",
 			command
 		)
 

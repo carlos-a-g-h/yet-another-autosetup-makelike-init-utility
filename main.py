@@ -62,7 +62,7 @@ def runner_joblist(
 		#target_tag:Optional[str]=None
 	):
 
-	print("\n[ Jobs List ]")
+	print("\n[ Jobs List ]\n")
 
 	#spec_tag=False
 	#if isinstance(target_tag,str):
@@ -102,7 +102,14 @@ def runner_joblist(
 				"\t" f"tag: {tag}"
 			)
 
+		print(
+			f"{headline}\n"
+		)
+
 		if hidden:
+			print(
+				"\t" "(Job skipped)"
+			)
 			continue
 
 		#print(headline)

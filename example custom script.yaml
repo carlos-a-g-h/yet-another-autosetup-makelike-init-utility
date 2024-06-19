@@ -1,0 +1,6 @@
+# Custom script example
+
+joblist:
+  - custom-script:
+      content: |
+        echo "HELLO WORLD"

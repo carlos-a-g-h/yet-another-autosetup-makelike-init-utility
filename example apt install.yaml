@@ -1,0 +1,15 @@
+# Install packages with APT, 3 different ways
+
+joblist:
+  - apt-install:
+      tag: Multiple packages
+      path: /home/you/packages/
+
+  - apt-install:
+      tag: Single package
+      path: /home/you/packages/other.deb
+
+  - apt-install:
+      tag: Pagkages by their names
+      names: package1 package2 package3
+

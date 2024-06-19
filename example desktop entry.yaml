@@ -1,0 +1,11 @@
+# Create a desktop entry for a program
+
+joblist:
+  - new-app:
+      # 'name', 'exec', and 'categories' are mandatory
+      # the filepath of the icon will end up being like this: /usr/share/icons/name-of-the-icon-without-the-extension.svg
+      name: Program 1
+      exec: program-name
+      categories: System;
+      icon: name-of-the-icon-without-the-extension
+      path-icon: /path/to/custom/icon.svg

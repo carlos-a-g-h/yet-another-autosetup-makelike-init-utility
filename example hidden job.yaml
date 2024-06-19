@@ -1,0 +1,22 @@
+# Custom script example
+# Skipping a job
+
+joblist:
+  - custom-script:
+      content: |
+        echo "HELLO WORLD"
+
+  - mount-blk:
+      tag: This will not run
+      hidden: true
+      file: /dev/sdx1
+      dest: /mnt/sdx-contents
+      mode: ro
+
+  - custom-script:
+      content: |
+        if [ -d /mnt/sdx-contents ]
+        then
+          ls /mnt/sdx-contents
+        fi
+        echo "There is nothing in there"
