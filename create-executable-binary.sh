@@ -1,7 +1,5 @@
 #!/bin/bash
 
-apt install -yy patchelf ccache python3-dev build-essential
-
 FILE_SRC="main.py"
 FILE_OUT="yetup"
 DIR_OUT="the-output"
