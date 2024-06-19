@@ -1,0 +1,79 @@
+name: Build release
+
+on:
+  [workflow_dispatch]
+
+env:
+  MAIN_PY: "main.py"
+  REQFILE: "requirements.txt"
+  BIN_NAME: "yetup"
+
+jobs:
+  job-build:
+    name: Build and upload executable binary
+    runs-on: ubuntu-20.04
+    steps:
+
+      - name: Download repo
+        uses: actions/checkout@v4
+        with:
+          path: workspace
+
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.9.6"
+
+      - name: Setup Python (project dependencies)
+        
+        run: |
+          pip install -r "${{ env.REQFILE }}"
+
+      - name: Setup Python (install Nuitka)
+        run: |
+          pip install nuitka
+
+      - name: Build
+        run: |
+          python3 -m nuitka --onefile --onefile-no-compression --assume-yes-for-downloads "${{ env.MAIN_PY }}" --output-dir="the-output" --output-filename="${{ env.BIN_NAME }}"
+          ls the-output
+
+      - name: Get exact date
+        id: step_date
+        run: |
+          echo "VAR_DATE=$(date +%Y-%m-%d-%H-%M-%S)" >> $GITHUB_OUTPUT
+
+      - name: (dbg) Printing date
+        run: echo "${{ steps.step_date.outputs.VAR_DATE }}"
+
+      - name: Create release
+        id: step_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          tag_name: "${{ steps.step_date.outputs.VAR_DATE }}"
+          release_name: "${{ steps.step_date.outputs.VAR_DATE }}"
+          draft: false
+          prerelease: false
+
+      - name: Pack it up
+        run: |
+          mkdir -v "${{ env.BIN_NAME }} ${{ steps.step_date.outputs.VAR_DATE }}"
+          mv -v "the-output/${{ env.BIN_NAME }}" "${{ env.BIN_NAME }} ${{ steps.step_date.outputs.VAR_DATE }}/"
+          mv -v README.md "${{ env.BIN_NAME }} ${{ steps.step_date.outputs.VAR_DATE }}/"
+          mv -v LICENSE "${{ env.BIN_NAME }} ${{ steps.step_date.outputs.VAR_DATE }}/"
+
+          zip -0 -r "${{ env.BIN_NAME }} ${{ steps.step_date.outputs.VAR_DATE }}.zip" "${{ env.BIN_NAME }} ${{ steps.step_date.outputs.VAR_DATE }}"
+          find .
+
+      - name: Attach the artifact
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+        with:
+          upload_url: "${{ steps.step_notes.outputs.THE_URL }}"
+          asset_path: "${{ env.THE_NAME }}-${{ matrix.binary }}.zip"
+          asset_name: "${{ env.THE_NAME }}-${{ matrix.binary }}.zip"
+          asset_content_type: application/octet-stream
