@@ -221,14 +221,14 @@ def command_help()->int:
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_WRITE_FILE}: # Writes content to a text file" "\n"
-		"\t\t" "dest: # Absolute path to a file" "\n"
+		"\t\t" "dest: # A path to a file" "\n"
 		"\t\t" "content: # Text that you want to write" "\n"
 
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_CREATE_SYMLINK}: # Create symbolic link (absolute paths only)" "\n"
-		"\t\t" "orig: # (Mandatory) Absolute path to a real file or directory" "\n"
-		"\t\t" "dest: # (Mandatory) Absolute path to the destination path for the symlink" "\n"
+		"\t\t" "orig: # (Mandatory) A path to a real file or directory" "\n"
+		"\t\t" "dest: # (Mandatory) A path to the destination path for the symlink" "\n"
 		"\t\t" "indir: # Wether the destination path is a directory and the symlink has to be created as a child of that directory" "\n"
 
 		"\n"
@@ -239,21 +239,21 @@ def command_help()->int:
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_MOUNT_BLOCK}: # Mount a file or block device" "\n"
-		"\t\t" "file: # (Mandatory) Absolute path to the block device file" "\n"
-		"\t\t" "dest: # (Mandatory) Absolute path to the destination directory" "\n"
+		"\t\t" "file: # (Mandatory) A path to the block device file" "\n"
+		"\t\t" "dest: # (Mandatory) A path to the destination directory" "\n"
 		"\t\t" "mode: # Mount mode (rw, ro). Leaving it blank means auto" "\n"
 
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_MOUNT_DIR}: # Bind mount of a directory (non-recursive)" "\n"
-		"\t\t" "orig: # Absolute path to the directory that you want to mount" "\n"
-		"\t\t" "dest: # Absolute path to the destination directory" "\n"
+		"\t\t" "orig: # A path to the directory that you want to mount" "\n"
+		"\t\t" "dest: # A path to the destination directory" "\n"
 
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_MOUNT_VOLUME}: # Mount a volume by its UUID" "\n"
 		"\t\t" "uuid: # (Mandatory) UUID of the volume (partition) that you want to mount" "\n"
-		"\t\t" "dest: # (Mandatory) Absolute path to the destination directory" "\n"
+		"\t\t" "dest: # (Mandatory) A path to the destination directory" "\n"
 		"\t\t" "mode: # Mount mode (rw, ro). Leaving it blank means auto" "\n"
 
 		"\n"
@@ -261,7 +261,7 @@ def command_help()->int:
 		"\t" f"- {_SYMBOL_JOBNAME_APTINSTALL}:" "\n"
 			"\t\t" "# Install packages from remote sources OR local .DEB packages using APT" "\n"
 			"\t\t" "# NOTE: You cannot do both things in the same job, you have to choose what to do" "\n"
-		"\t\t" "path: # Path to a package or a directory (non-recursive)" "\n"
+		"\t\t" "path: # A path to a package or a directory (non-recursive)" "\n"
 		"\t\t" "names: # Names of packages separated by a single space" "\n"
 
 		"\n"
@@ -280,7 +280,7 @@ def command_help()->int:
 			"\t\t\t" "# Image file path that will be copied to /usr/share/icons/" "\n"
 			"\t\t\t" "# The filename will be the icon name + the file extension from the given path" "\n"
 		"\t\t" "path-link:" "\n"
-			"\t\t\t" "# Path to a new symlink" "\n"
+			"\t\t\t" "# A path to a new symlink" "\n"
 			"\t\t\t" "# The path has to be a directory" "\n"
 
 		"\n"
@@ -291,9 +291,11 @@ def command_help()->int:
 
 		"\t" "# 'tag' field: You can add the 'tag' field to any job to identify it at runtime, this is good for debugging and testing" "\n"
 		"\t" "# 'crucial' field: Jobs marked as crucial will cancel the entire workflow in case of failure" "\n"
-		"\t" "# 'hidden' field: Hidden jobs will be skipped when running the joblist"
+		"\t" "# 'hidden' field: Hidden jobs will be skipped when running the joblist" "\n\n"
 
-		"\n"
+		"\t" "# About path parameters:" "\n\n"
+		"\t" "# Paths can be absolute or non-absolute (relative)" "\n"
+		"\t" "# Non-absolute paths will be taken as relative to the config file's parent directory" "\n"
 	)
 
 	return 0
