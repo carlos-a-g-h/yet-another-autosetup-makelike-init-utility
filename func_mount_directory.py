@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Mapping
 
+from utils import util_path_fixer
 from utils import util_verif_str
 from utils import util_subproc
 
@@ -47,7 +48,10 @@ def job(
 		])
 	)
 
-def main(arguments:Mapping)->bool:
+def main(
+		arguments:Mapping,
+		path_basedir:Path
+	)->bool:
 
 	# mount-dir:
 	#   origin: Path
@@ -68,7 +72,13 @@ def main(arguments:Mapping)->bool:
 
 	return (
 		job(
-			Path(arg_origin),
-			Path(arg_dest)
+			util_path_fixer(
+				Path(arg_origin),
+				path_basedir
+			),
+			util_path_fixer(
+				Path(arg_dest),
+				path_basedir
+			),
 		)
 	)

@@ -10,6 +10,15 @@ from typing import Optional,Union,Mapping
 from yaml import Loader as yaml_Loader
 from yaml import load as yaml_load
 
+def util_path_fixer(
+		given_path:Path,
+		base_path:Path
+	)->Path:
+
+	if given_path.is_absolute():
+		return given_path
+
+	return base_path.joinpath(given_path)
 
 def util_yaml_reader(
 		filepath:Path

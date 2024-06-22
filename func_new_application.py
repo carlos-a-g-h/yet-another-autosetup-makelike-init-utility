@@ -6,19 +6,29 @@ from typing import Mapping,Optional
 from utils import util_verif_str
 from utils import util_verif_bool
 from utils import util_create_symlink
+from utils import util_path_fixer
 
 _JOBNAME="new-app"
 
 def job(
+
+		path_basedir:Path,
+
 		stem:str,
-		app_name:str,app_exec:str,app_categories:str,
+
+		app_name:str,
+		app_exec:str,
+		app_categories:str,
+
 		app_comment:Optional[str],
 		app_terminal:bool,
 		app_icon:Optional[str],
 		app_mimetype:Optional[str],
 		app_snotify:Optional[str],
+
 		app_path_icon:Optional[str],
 		app_path_link:Optional[str],
+
 	)->bool:
 
 	filepath=Path(
@@ -90,7 +100,9 @@ def job(
 		return False
 
 	if isinstance(app_path_link,str):
-		dirpath_link=Path(app_path_link)
+		dirpath_link=util_path_fixer(
+			Path(app_path_link),path_basedir
+		)
 		if not util_create_symlink(filepath,dirpath_link,True):
 			print(
 				"WARNING: Failed to create the link for the app"
@@ -98,7 +110,9 @@ def job(
 
 	if has_icon:
 		if isinstance(app_path_icon,str):
-			app_path_icon_pl=Path(app_path_icon)
+			app_path_icon_pl=util_path_fixer(
+				Path(app_path_icon),path_basedir
+			)
 			wutt=(
 				not app_path_icon_pl.is_file()
 			)
@@ -134,7 +148,10 @@ def job(
 	return True
 
 
-def main(arguments:Mapping)->bool:
+def main(
+		arguments:Mapping,
+		path_basedir:Path
+	)->bool:
 
 	arg_stem=util_verif_str(
 		arguments.get("stem")
@@ -192,6 +209,7 @@ def main(arguments:Mapping)->bool:
 
 	return (
 		job(
+			path_basedir,
 			arg_stem,
 			arg_name,arg_exec,arg_categories,
 			arg_comment,arg_terminal,arg_icon,arg_mimetype,arg_snotify,

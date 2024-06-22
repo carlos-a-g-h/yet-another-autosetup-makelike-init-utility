@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Mapping
 
+from utils import util_path_fixer
 from utils import util_verif_str
 
 _JOBNAME="write-file"
@@ -39,7 +40,10 @@ def job(
 
 	return True
 
-def main(arguments:Mapping)->bool:
+def main(
+		arguments:Mapping,
+		path_basedir:Path
+	)->bool:
 
 	# write-file:
 	#   dest: Path
@@ -58,7 +62,10 @@ def main(arguments:Mapping)->bool:
 
 	return (
 		job(
-			Path(path_dest_str).absolute(),
+			util_path_fixer(
+				Path(path_dest_str),
+				path_basedir
+			),
 			content
 		)
 	)

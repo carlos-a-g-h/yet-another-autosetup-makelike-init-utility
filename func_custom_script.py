@@ -9,20 +9,20 @@ from utils import util_verif_str
 
 _JOBNAME="custom-script"
 
-def job(
-		content:str,
-		path_programdir:Path
-	)->bool:
+def job(content:str)->bool:
 
 	print(
 		"→ Running a custom script" "\n"
 	)
 
-	tmp_scr=path_programdir.joinpath(
-		f"tmp.{token_hex(16)}.sh"
-	)
+	tmp_scr=Path(f"/tmp/script.{token_hex(16)}.sh")
 
-	tmp_scr.write_text(content)
+	try:
+		tmp_scr.parent.mkdir(exist_ok=True,parents=True)
+		tmp_scr.write_text(content)
+	except Exception as exc:
+		print(exc)
+		return False
 
 	ok=util_subproc([
 		"bash",
@@ -33,10 +33,7 @@ def job(
 
 	return ok
 
-def main(
-		arguments:Mapping,
-		path_programdir:Path
-	)->bool:
+def main(arguments:Mapping)->bool:
 
 	# custom-script:
 	#   content:|
@@ -47,8 +44,5 @@ def main(
 		return False
 
 	return (
-		job(
-			content,
-			path_programdir
-		)
+		job(content)
 	)

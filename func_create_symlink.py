@@ -6,6 +6,7 @@ from typing import Mapping
 from utils import util_verif_str
 from utils import util_verif_bool
 from utils import util_create_symlink
+from utils import util_path_fixer
 
 _JOBNAME="create-link"
 
@@ -29,7 +30,8 @@ def job(
 	)
 
 def main(
-		arguments:Mapping
+		arguments:Mapping,
+		path_basedir:Path
 	)->bool:
 
 	# link-path:
@@ -54,8 +56,14 @@ def main(
 	)
 
 	return job(
-		Path(arg_orig).absolute(),
-		Path(arg_dest).absolute(),
+		util_path_fixer(
+			Path(arg_orig),
+			path_basedir
+		),
+		util_path_fixer(
+			Path(arg_dest),
+			path_basedir
+		),
 		arg_indir
 	)
 

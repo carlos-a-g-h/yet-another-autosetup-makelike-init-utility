@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Mapping
 
+from utils import util_path_fixer
 from utils import util_verif_str
 from utils import util_subproc
 
@@ -86,7 +87,10 @@ def job_type2(names_raw:str)->bool:
 		)
 	)
 
-def main(arguments:Mapping)->bool:
+def main(
+		arguments:Mapping,
+		path_basedir:Path
+	)->bool:
 
 	# - apt-install:
 	#     path: Path
@@ -106,7 +110,10 @@ def main(arguments:Mapping)->bool:
 
 		return (
 			job_type1(
-				Path(arg_path_str)
+				util_path_fixer(
+					Path(arg_path_str),
+					path_basedir
+				)
 			)
 		)
 

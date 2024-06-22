@@ -1,7 +1,8 @@
 #!/usr/bin/python3.9
 
 from pathlib import Path
-from typing import Mapping,Optional
+from typing import Mapping
+# from typing import Optional
 
 from utils import util_yaml_reader
 from utils import util_verif_bool
@@ -58,8 +59,7 @@ def runner_timesetup(data_time:Mapping):
 
 def runner_joblist(
 		data_joblist:list,
-		path_programdir:Path,
-		#target_tag:Optional[str]=None
+		path_basedir:Path,
 	):
 
 	print("\n[ Jobs List ]\n")
@@ -121,34 +121,34 @@ def runner_joblist(
 		#		continue
 
 		if mainkey==_SYMBOL_JOBNAME_CUSTOM_SCRIPT:
-			ok=runjob_custom_script(step.get(mainkey),path_programdir)
+			ok=runjob_custom_script(step.get(mainkey))
 
 		if mainkey==_SYMBOL_JOBNAME_WRITE_FILE:
-			ok=runjob_write_file(step.get(mainkey))
+			ok=runjob_write_file(step.get(mainkey),path_basedir)
 
 		if mainkey==_SYMBOL_JOBNAME_CREATE_SYMLINK:
-			ok=runjob_create_symlink(step.get(mainkey))
+			ok=runjob_create_symlink(step.get(mainkey),path_basedir)
 
 		if mainkey==_SYMBOL_JOBNAME_MOUNT_BLOCK:
-			ok=runjob_mount_block(step.get(mainkey))
+			ok=runjob_mount_block(step.get(mainkey),path_basedir)
 
 		if mainkey==_SYMBOL_JOBNAME_MOUNT_DIR:
-			ok=runjob_mount_directory(step.get(mainkey))
+			ok=runjob_mount_directory(step.get(mainkey),path_basedir)
 
 		if mainkey==_SYMBOL_JOBNAME_MOUNT_VOLUME:
-			ok=runjob_mount_volume(step.get(mainkey))
+			ok=runjob_mount_volume(step.get(mainkey),path_basedir)
 
 		if mainkey==_SYMBOL_JOBNAME_APTINSTALL:
-			ok=runjob_apt_install(step.get(mainkey))
+			ok=runjob_apt_install(step.get(mainkey),path_basedir)
 
 		if mainkey==_SYMBOL_JOBNAME_NEW_APP:
-			ok=runjob_new_application(step.get(mainkey))
+			ok=runjob_new_application(step.get(mainkey),path_basedir)
 
 		if not ok:
 
 			if crucial:
 				print(
-					"\nJob failed! Cannot go any further\n"
+					"\nA crucial job failed! Cannot go any further\n"
 				)
 				break
 
@@ -160,7 +160,7 @@ def runner_joblist(
 
 def runner(
 		data:Mapping,
-		path_programdir:Path
+		path_basedir:Path
 	):
 
 	# print(data)
@@ -179,7 +179,7 @@ def runner(
 
 		runner_joblist(
 			data[_SYMBOL_JOBLIST],
-			path_programdir
+			path_basedir
 		)
 
 def command_run(path_config:Path)->int:
@@ -195,7 +195,7 @@ def command_run(path_config:Path)->int:
 
 	runner(
 		the_custom_config,
-		Path(sys_argv[0]).parent,
+		path_config.parent,
 	)
 
 	return 0

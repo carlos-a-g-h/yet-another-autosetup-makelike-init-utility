@@ -3,6 +3,7 @@
 from pathlib import Path
 from typing import Mapping,Optional
 
+from utils import util_path_fixer
 from utils import util_subproc
 from utils import util_verif_str
 
@@ -55,7 +56,10 @@ def job(
 		])
 	)
 
-def main(arguments:Mapping)->bool:
+def main(
+		arguments:Mapping,
+		path_basedir:Path
+	)->bool:
 
 	# mount-volume:
 	#   uuid: String
@@ -85,7 +89,10 @@ def main(arguments:Mapping)->bool:
 	return (
 		job(
 			arg_uuid,
-			Path(arg_dest),
+			util_path_fixer(
+				Path(arg_dest),
+				path_basedir
+			),
 			mode=arg_mode
 		)
 	)

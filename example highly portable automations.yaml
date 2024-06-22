@@ -1,0 +1,11 @@
+# Smart usage of paths:
+# All given paths here are relative to the config file, which means that moving things around won't break your stuff easily
+
+joblist:
+  - apt-install:
+      tag: Local packages in a subdirectory
+      path: packages/
+
+  - mount-dir:
+      tag: Mounting a local config
+      path: my-config/
