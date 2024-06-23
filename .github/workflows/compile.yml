@@ -64,18 +64,6 @@ jobs:
         if: ${{ inputs.TRY_ONLY == false }}
         run: echo "${{ steps.step_date.outputs.VAR_DATE }}"
 
-      - name: Create release
-        if: ${{ inputs.TRY_ONLY == false }}
-        id: step_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          tag_name: "${{ steps.step_date.outputs.VAR_DATE }}"
-          release_name: "${{ steps.step_date.outputs.VAR_DATE }}"
-          draft: false
-          prerelease: false
-
       - name: Pack it up
         if: ${{ inputs.TRY_ONLY == false }}
         working-directory: workspace
@@ -92,6 +80,18 @@ jobs:
           find "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}"
           echo "}"
           zip -0 -r "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}.zip" "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}"
+
+      - name: Create release
+        if: ${{ inputs.TRY_ONLY == false }}
+        id: step_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          tag_name: "${{ steps.step_date.outputs.VAR_DATE }}"
+          release_name: "${{ steps.step_date.outputs.VAR_DATE }}"
+          draft: false
+          prerelease: false
 
       - name: Attach the artifact
         if: ${{ inputs.TRY_ONLY == false }}
