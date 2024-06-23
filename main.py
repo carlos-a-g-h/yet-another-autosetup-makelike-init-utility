@@ -121,7 +121,7 @@ def runner_joblist(
 		#		continue
 
 		if mainkey==_SYMBOL_JOBNAME_CUSTOM_SCRIPT:
-			ok=runjob_custom_script(step.get(mainkey))
+			ok=runjob_custom_script(step.get(mainkey),path_basedir)
 
 		if mainkey==_SYMBOL_JOBNAME_WRITE_FILE:
 			ok=runjob_write_file(step.get(mainkey),path_basedir)
@@ -234,7 +234,11 @@ def command_help()->int:
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_CUSTOM_SCRIPT}: # Run a custom bash script" "\n"
-		"\t\t" "content: # A bash script (multiline recommended), nonzero exit status will be trated as a failure" "\n"
+		"\t\t" "content:"
+			"\t\t\t" "# A bash script (multiline recommended), nonzero exit status will be trated as a failure" "\n"
+			"\t\t\t" "# The Config file's working directory path (CFWD) is inyected into the bash script as a variable called 'CONFIG_FILE_WORKING_DIRECTORY'" "\n"
+
+		"\t\t" "cfwd-as: # Rename the variable holding the inyected CFWD to a different name" "\n"
 
 		"\n"
 

@@ -145,6 +145,9 @@ def util_subproc(
 	)
 	rc:int=proc.returncode
 
+	if announce:
+		print("Script output {")
+
 	stdout_ok:Optional[str]=util_verif_str(
 		proc.stdout.decode()
 	)
@@ -156,5 +159,8 @@ def util_subproc(
 	)
 	if isinstance(stderr_ok,str):
 		print(stderr_ok)
+
+	if announce:
+		print("} End of Script output")
 
 	return (rc==0)

@@ -1,6 +1,17 @@
 # Custom script example
 
 joblist:
+
+  - custom-script:
+      content: echo "HELLO WORLD"
+
   - custom-script:
       content: |
-        echo "HELLO WORLD"
+        echo "printing CFWD (config file working directory) path inyected into the script!"
+        echo "$CONFIG_FILE_WORKING_DIRECTORY"
+
+  - custom-script:
+      cfwd-as: WORKDIR
+      content: |
+        echo "printing CFWD variable renamed to something else"
+        echo "$WORKDIR"
