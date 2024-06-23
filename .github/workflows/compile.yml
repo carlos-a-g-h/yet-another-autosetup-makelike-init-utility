@@ -44,7 +44,14 @@ jobs:
         working-directory: workspace
         run: |
           python3 -m nuitka --onefile --onefile-no-compression --follow-imports --assume-yes-for-downloads "${{ env.MAIN_PY }}" --output-dir="the-output" --output-filename="${{ env.BIN_NAME }}"
+
+      - name: (dbg) Check file
+        if: ${{ inputs.TRY_ONLY == true }}
+        working-directory: workspace
+        run: |
           ls the-output
+          ls the-output/${{ env.BIN_NAME }}
+          file the-output/${{ env.BIN_NAME }}
           du -h the-output/${{ env.BIN_NAME }}
 
       - name: Get exact date
