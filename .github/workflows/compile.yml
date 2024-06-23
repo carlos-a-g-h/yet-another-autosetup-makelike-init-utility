@@ -43,7 +43,7 @@ jobs:
       - name: Build
         working-directory: workspace
         run: |
-          python3 -m nuitka --standalone --follow-imports --assume-yes-for-downloads "${{ env.MAIN_PY }}" --output-dir="the-output" --output-filename="${{ env.BIN_NAME }}"
+          python3 -m nuitka --standalone --onefile --follow-imports --assume-yes-for-downloads "${{ env.MAIN_PY }}" --output-dir="the-output" --output-filename="${{ env.BIN_NAME }}"
 
       - name: (dbg) Check file
         if: ${{ inputs.TRY_ONLY == true }}
