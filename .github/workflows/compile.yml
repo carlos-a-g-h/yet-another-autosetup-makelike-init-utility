@@ -7,7 +7,7 @@ on:
         description: Get compilation details only
         type: boolean
         required: true
-        default: false
+        default: true
 
 env:
   MAIN_PY: "main.py"
