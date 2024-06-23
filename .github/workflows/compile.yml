@@ -1,7 +1,13 @@
-name: Build release
+name: Compile using Nuitka
 
 on:
-  [workflow_dispatch]
+  workflow_dispatch:
+    inputs:
+      TRY_ONLY:
+        description: Get compilation details only
+        type: boolean
+        required: true
+        default: false
 
 env:
   MAIN_PY: "main.py"
@@ -37,18 +43,22 @@ jobs:
       - name: Build
         working-directory: workspace
         run: |
-          python3 -m nuitka --onefile --onefile-no-compression --assume-yes-for-downloads "${{ env.MAIN_PY }}" --output-dir="the-output" --output-filename="${{ env.BIN_NAME }}"
+          python3 -m nuitka --onefile --onefile-no-compression --follow-imports --assume-yes-for-downloads "${{ env.MAIN_PY }}" --output-dir="the-output" --output-filename="${{ env.BIN_NAME }}"
           ls the-output
+          du -h the-output/${{ env.BIN_NAME }}
 
       - name: Get exact date
+        if: ${{ inputs.TRY_ONLY == false }}
         id: step_date
         run: |
           echo "VAR_DATE=$(date +%Y-%m-%d-%H-%M-%S)" >> $GITHUB_OUTPUT
 
       - name: (dbg) Printing date
+        if: ${{ inputs.TRY_ONLY == false }}
         run: echo "${{ steps.step_date.outputs.VAR_DATE }}"
 
       - name: Create release
+        if: ${{ inputs.TRY_ONLY == false }}
         id: step_release
         uses: actions/create-release@v1
         env:
@@ -60,6 +70,7 @@ jobs:
           prerelease: false
 
       - name: Pack it up
+        if: ${{ inputs.TRY_ONLY == false }}
         working-directory: workspace
         run: |
           mkdir -v "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}"
@@ -76,6 +87,7 @@ jobs:
           zip -0 -r "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}.zip" "${{ env.BIN_NAME }}-${{ steps.step_date.outputs.VAR_DATE }}"
 
       - name: Attach the artifact
+        if: ${{ inputs.TRY_ONLY == false }}
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
