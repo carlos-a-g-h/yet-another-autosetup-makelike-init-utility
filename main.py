@@ -226,7 +226,7 @@ def command_help()->int:
 
 		"\n"
 
-		"\t" f"- {_SYMBOL_JOBNAME_CREATE_SYMLINK}: # Create symbolic link (absolute paths only)" "\n"
+		"\t" f"- {_SYMBOL_JOBNAME_CREATE_SYMLINK}: # Create symbolic link. All links created are absolute" "\n"
 		"\t\t" "orig: # (Mandatory) A path to a real file or directory" "\n"
 		"\t\t" "dest: # (Mandatory) A path to the destination path for the symlink" "\n"
 		"\t\t" "indir: # Wether the destination path is a directory and the symlink has to be created as a child of that directory" "\n"
@@ -234,7 +234,7 @@ def command_help()->int:
 		"\n"
 
 		"\t" f"- {_SYMBOL_JOBNAME_CUSTOM_SCRIPT}: # Run a custom bash script" "\n"
-		"\t\t" "content:"
+		"\t\t" "content:" "\n"
 			"\t\t\t" "# A bash script (multiline recommended), nonzero exit status will be trated as a failure" "\n"
 			"\t\t\t" "# The Config file's working directory path (CFWD) is inyected into the bash script as a variable called 'CONFIG_FILE_WORKING_DIRECTORY'" "\n"
 
